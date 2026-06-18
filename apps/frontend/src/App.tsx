@@ -11,6 +11,7 @@ import { UsersPage } from './pages/Users';
 import { StatusPage } from './pages/Status';
 import { ReportsPage } from './pages/Reports';
 import { WorkflowsPage } from './pages/Workflows';
+import { PricingPage } from './pages/Pricing';
 
 const ProtectedRoute = ({ children, requireAdmin }: { children: React.ReactNode, requireAdmin?: boolean }) => {
   const { token, role } = useAuthStore();
@@ -46,6 +47,12 @@ function App() {
           <Route path="/reports" element={
             <ProtectedRoute requireAdmin>
               <ReportsPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/pricing" element={
+            <ProtectedRoute requireAdmin>
+              <PricingPage />
             </ProtectedRoute>
           } />
 

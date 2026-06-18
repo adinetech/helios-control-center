@@ -13,6 +13,7 @@ const navItems = [
 
 const adminNavItems = [
   { name: 'Executive Reports', href: '/reports', icon: FileBarChart },
+  { name: 'Pricing Strategy', href: '/pricing', icon: Activity },
   { name: 'Users', href: '/users', icon: Users },
 ];
 
