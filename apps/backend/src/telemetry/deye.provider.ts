@@ -13,8 +13,14 @@ export class DeyeTelemetryProvider implements TelemetryProvider {
   constructor(private readonly prisma: PrismaService) {}
 
   async processTelemetry(): Promise<void> {
-    const farms = await this.prisma.farm.findMany({ where: { status: 'ONLINE' } });
-    if (farms.length === 0) return;
+    // Only use the primary farm (smallest capacityKw = home installation).
+    // The Deye inverter is a single device; inserting into all farms would triple-count data.
+    const primaryFarm = await this.prisma.farm.findFirst({
+      where: { status: 'ONLINE' },
+      orderBy: { capacityKw: 'asc' },
+    });
+    if (!primaryFarm) return;
+    const farms = [primaryFarm];
 
     try {
       const response = await axios.get(this.exporterUrl, { timeout: 10000 });
@@ -24,20 +30,26 @@ export class DeyeTelemetryProvider implements TelemetryProvider {
       
       for (const farm of farms) {
         // Map Deye metrics to our internal model
+        // NOTE: Deye exporter reports pv1_power, pv2_power in Watts.
+        // battery_power, load_power, grid_power are also in Watts — divide by 1000 for kW.
         const pv1PowerKw = (parsedData.get('deye_pv1_power') || 0) / 1000;
         const pv2PowerKw = (parsedData.get('deye_pv2_power') || 0) / 1000;
         const totalPvPowerKw = pv1PowerKw + pv2PowerKw;
-        
+
+        // load_power / grid_power / battery_power are all in Watts from Deye exporter
         const loadPowerKw = (parsedData.get('deye_total_load_power') || 0) / 1000;
+        // grid_power: positive = importing, negative = exporting (Deye convention)
         const gridPowerKw = (parsedData.get('deye_total_grid_power') || 0) / 1000;
+        // battery_power: positive = discharging, negative = charging
         const batteryPowerKw = (parsedData.get('deye_battery_power') || 0) / 1000;
-        
-        const batterySoc = parsedData.get('deye_battery_soc');
-        const batteryVoltage = parsedData.get('deye_battery_voltage');
-        
-        const dailyProductionKwh = parsedData.get('deye_daily_production');
-        const totalProductionKwh = parsedData.get('deye_total_production');
-        const temperatureC = parsedData.get('deye_dc_temperature') || 0;
+
+        const batterySoc = parsedData.get('deye_battery_soc') ?? null;
+        const batteryVoltage = parsedData.get('deye_battery_voltage') ?? null;
+
+        const dailyProductionKwh = parsedData.get('deye_daily_production') ?? null;
+        const totalProductionKwh = parsedData.get('deye_total_production') ?? null;
+        // Deye exposes dc_temperature; fall back to battery_temperature if missing
+        const temperatureC = parsedData.get('deye_dc_temperature') ?? parsedData.get('deye_battery_temperature') ?? 0;
 
         await this.prisma.telemetry.create({
           data: {
