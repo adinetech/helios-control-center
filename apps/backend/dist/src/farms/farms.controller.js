@@ -31,6 +31,12 @@ let FarmsController = class FarmsController {
     findById(id) {
         return this.farmsService.findById(id);
     }
+    async remove(id) {
+        return this.farmsService.remove(id);
+    }
+    async getTelemetry(id) {
+        return this.farmsService.getTelemetry(id, 60);
+    }
     create(body) {
         return this.farmsService.create(body);
     }
@@ -52,6 +58,21 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], FarmsController.prototype, "findById", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], FarmsController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Get)(':id/telemetry'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], FarmsController.prototype, "getTelemetry", null);
 __decorate([
     (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.MANAGER),
     (0, common_1.Post)(),

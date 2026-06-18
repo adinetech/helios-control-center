@@ -41,9 +41,9 @@ const pool = new pg_1.Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new adapter_pg_1.PrismaPg(pool);
 const prisma = new client_1.PrismaClient({ adapter });
 async function main() {
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@helios.local';
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@solarops.cloud';
     const adminPassword = process.env.ADMIN_PASSWORD || 'admin';
-    const adminName = process.env.ADMIN_NAME || 'Helios Admin';
+    const adminName = process.env.ADMIN_NAME || 'SolarOps Admin';
     const existingAdmin = await prisma.user.findUnique({
         where: { email: adminEmail },
     });
@@ -61,6 +61,20 @@ async function main() {
     }
     else {
         console.log(`Admin user ${adminEmail} already exists.`);
+    }
+    const farmCount = await prisma.farm.count();
+    if (farmCount === 0) {
+        await prisma.farm.createMany({
+            data: [
+                { name: 'Nevada Solar One', location: 'Nevada, USA', capacityKw: 64000, status: 'ONLINE' },
+                { name: 'Kamuthi Solar Power Project', location: 'Tamil Nadu, India', capacityKw: 648000, status: 'ONLINE' },
+                { name: 'Ouarzazate Solar Power Station', location: 'Drâa-Tafilalet, Morocco', capacityKw: 510000, status: 'ONLINE' },
+            ],
+        });
+        console.log('Seeded default solar farms.');
+    }
+    else {
+        console.log('Solar farms already exist. Skipping seed.');
     }
 }
 main()

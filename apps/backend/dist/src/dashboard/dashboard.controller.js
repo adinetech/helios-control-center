@@ -22,6 +22,9 @@ let DashboardController = class DashboardController {
     async getSummary() {
         return this.dashboardService.getSummary();
     }
+    async getHistory() {
+        return this.dashboardService.getHistory(60);
+    }
 };
 exports.DashboardController = DashboardController;
 __decorate([
@@ -30,6 +33,12 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], DashboardController.prototype, "getSummary", null);
+__decorate([
+    (0, common_1.Get)('history'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], DashboardController.prototype, "getHistory", null);
 exports.DashboardController = DashboardController = __decorate([
     (0, swagger_1.ApiTags)('Dashboard'),
     (0, swagger_1.ApiBearerAuth)(),

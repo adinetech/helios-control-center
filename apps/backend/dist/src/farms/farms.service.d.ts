@@ -11,6 +11,23 @@ export declare class FarmsService {
         capacityKw: number;
         status: import("@prisma/client").$Enums.FarmStatus;
     }[]>;
+    remove(id: string): Promise<{
+        id: string;
+        name: string;
+        createdAt: Date;
+        updatedAt: Date;
+        location: string;
+        capacityKw: number;
+        status: import("@prisma/client").$Enums.FarmStatus;
+    }>;
+    getTelemetry(farmId: string, minutes?: number): Promise<{
+        id: string;
+        farmId: string;
+        timestamp: Date;
+        powerOutputKw: number;
+        temperatureC: number;
+        irradiance: number;
+    }[]>;
     findById(id: string): Promise<{
         id: string;
         name: string;

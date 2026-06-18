@@ -19,6 +19,8 @@ const farms_module_1 = require("./farms/farms.module");
 const health_module_1 = require("./health/health.module");
 const dashboard_module_1 = require("./dashboard/dashboard.module");
 const telemetry_module_1 = require("./telemetry/telemetry.module");
+const reports_module_1 = require("./reports/reports.module");
+const tasks_module_1 = require("./tasks/tasks.module");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const http_metrics_interceptor_1 = require("./metrics/http-metrics.interceptor");
@@ -48,6 +50,8 @@ exports.AppModule = AppModule = __decorate([
             health_module_1.HealthModule,
             dashboard_module_1.DashboardModule,
             telemetry_module_1.TelemetryModule,
+            reports_module_1.ReportsModule,
+            tasks_module_1.TasksModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

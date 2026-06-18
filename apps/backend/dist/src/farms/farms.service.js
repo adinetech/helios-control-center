@@ -20,6 +20,16 @@ let FarmsService = class FarmsService {
     async findAll() {
         return this.prisma.farm.findMany();
     }
+    async remove(id) {
+        return this.prisma.farm.delete({ where: { id } });
+    }
+    async getTelemetry(farmId, minutes = 60) {
+        const since = new Date(Date.now() - minutes * 60000);
+        return this.prisma.telemetry.findMany({
+            where: { farmId, timestamp: { gte: since } },
+            orderBy: { timestamp: 'asc' },
+        });
+    }
     async findById(id) {
         return this.prisma.farm.findUnique({ where: { id } });
     }

@@ -8,11 +8,12 @@ const swagger_1 = require("@nestjs/swagger");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule, { bufferLogs: true });
     app.useLogger(app.get(nestjs_pino_1.Logger));
+    app.enableCors();
     app.setGlobalPrefix('api');
     app.useGlobalPipes(new common_1.ValidationPipe({ whitelist: true }));
     const config = new swagger_1.DocumentBuilder()
-        .setTitle('Helios Control Center API')
-        .setDescription('API documentation for Helios Control Center')
+        .setTitle('SolarOps API')
+        .setDescription('API documentation for SolarOps Solar Farm Management Cloud')
         .setVersion('1.0')
         .addBearerAuth()
         .build();
