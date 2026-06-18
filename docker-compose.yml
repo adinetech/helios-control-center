@@ -105,6 +105,7 @@ services:
       - "9090:9090"
     volumes:
       - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
     networks:
       - helios-net
     healthcheck:
@@ -120,6 +121,7 @@ services:
       - "3100:3100"
     volumes:
       - ./infra/loki/local-config.yaml:/etc/loki/local-config.yaml
+      - loki-data:/loki
     command: -config.file=/etc/loki/local-config.yaml
     networks:
       - helios-net
@@ -167,6 +169,8 @@ volumes:
   postgres-data:
   tailscale-data:
   grafana-data:
+  prometheus-data:
+  loki-data:
 
 networks:
   helios-net:
