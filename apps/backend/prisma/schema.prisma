@@ -20,6 +20,21 @@ enum FarmStatus {
   WARNING
 }
 
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -29,6 +44,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   farms     Farm[]   @relation("UserFarms")
+  tasks     Task[]   @relation("UserTasks")
 }
 
 model Farm {
@@ -41,6 +57,7 @@ model Farm {
   updatedAt   DateTime @updatedAt
   users       User[]   @relation("UserFarms")
   telemetry   Telemetry[]
+  tasks       Task[]   @relation("FarmTasks")
 }
 
 model Telemetry {
@@ -63,4 +80,19 @@ model Telemetry {
   loadPowerKw        Float?
   dailyProductionKwh Float?
   totalProductionKwh Float?
+}
+
+model Task {
+  id          String       @id @default(uuid())
+  title       String
+  description String?
+  status      TaskStatus   @default(PENDING)
+  priority    TaskPriority @default(MEDIUM)
+  farmId      String?
+  assigneeId  String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  farm        Farm?        @relation("FarmTasks", fields: [farmId], references: [id])
+  assignee    User?        @relation("UserTasks", fields: [assigneeId], references: [id])
 }

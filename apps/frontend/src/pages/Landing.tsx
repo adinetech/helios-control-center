@@ -355,11 +355,32 @@ export const LandingPage = () => {
               </div>
             ))}
           </div>
-          <div style={{ marginTop: '3rem', textAlign: 'center', padding: '2rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16 }}>
-            <h4 style={{ fontWeight: 700, marginBottom: '0.5rem' }}>💡 Cost Optimization Recommendations</h4>
-            <p style={{ color: '#9ca3af', fontSize: '0.875rem', maxWidth: 700, margin: '0 auto', lineHeight: 1.6 }}>
-              Use AWS Reserved Instances (1-year) for <strong style={{ color: '#f9fafb' }}>up to 40% savings</strong> vs On-Demand. Enable S3 Intelligent-Tiering for telemetry archival. Use CloudWatch Savings Plans for monitoring cost reduction. Multi-region DR adds ~30% to base compute cost but ensures RPO &lt; 15min.
-            </p>
+          <div style={{ marginTop: '3rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+            <div style={{ padding: '2rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, textAlign: 'left' }}>
+              <h4 style={{ fontWeight: 700, marginBottom: '1rem', color: '#f59e0b', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Globe size={16} /> Multi-Region & Disaster Recovery
+              </h4>
+              <p style={{ color: '#9ca3af', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1rem' }}>
+                Enterprise deployments can span multiple AWS regions for high availability and strict data compliance.
+              </p>
+              <ul style={{ color: '#d1d5db', fontSize: '0.85rem', lineHeight: 1.8, paddingLeft: '1.2rem', marginBottom: '1rem' }}>
+                <li><strong>Active-Passive DR:</strong> +35% infrastructure cost (RPO &lt; 15m, RTO &lt; 1h)</li>
+                <li><strong>Active-Active Multi-Region:</strong> +80% infrastructure cost (RPO ~0, RTO ~0)</li>
+                <li><strong>Cross-Region Backup Replication:</strong> +$0.02/GB transferred</li>
+              </ul>
+            </div>
+            
+            <div style={{ padding: '2rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, textAlign: 'left' }}>
+              <h4 style={{ fontWeight: 700, marginBottom: '1rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Zap size={16} /> Cost Optimization Recommendations
+              </h4>
+              <ul style={{ color: '#d1d5db', fontSize: '0.85rem', lineHeight: 1.8, paddingLeft: '1.2rem' }}>
+                <li>Use <strong>AWS Reserved Instances</strong> (1-year or 3-year terms) to save up to 40% on steady-state EC2 workloads.</li>
+                <li>Enable <strong>S3 Intelligent-Tiering</strong> for long-term archival of high-frequency telemetry data.</li>
+                <li>Purchase <strong>CloudWatch Savings Plans</strong> to reduce observability and log ingestion costs.</li>
+                <li>Implement spot instances for non-critical, interruptible batch analytics jobs.</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>

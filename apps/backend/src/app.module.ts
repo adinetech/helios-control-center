@@ -11,6 +11,7 @@ import { FarmsModule } from './farms/farms.module';
 import { HealthModule } from './health/health.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { TelemetryModule } from './telemetry/telemetry.module';
+import { ReportsModule } from './reports/reports.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HttpMetricsInterceptor } from './metrics/http-metrics.interceptor';
@@ -37,6 +38,7 @@ import { HttpMetricsInterceptor } from './metrics/http-metrics.interceptor';
     HealthModule,
     DashboardModule,
     TelemetryModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [

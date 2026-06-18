@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Factory, AlertTriangle, Users, Activity, Sun } from 'lucide-react';
+import { LayoutDashboard, Factory, AlertTriangle, Users, Activity, Sun, FileBarChart } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useAuthStore } from '../../store/auth';
 
@@ -8,6 +8,11 @@ const navItems = [
   { name: 'Solar Farms', href: '/farms', icon: Factory },
   { name: 'Alerts', href: '/alerts', icon: AlertTriangle },
   { name: 'System Status', href: '/status', icon: Activity },
+];
+
+const adminNavItems = [
+  { name: 'Executive Reports', href: '/reports', icon: FileBarChart },
+  { name: 'Users', href: '/users', icon: Users },
 ];
 
 export const Sidebar = () => {
@@ -41,18 +46,26 @@ export const Sidebar = () => {
           </NavLink>
         ))}
         {role === 'ADMIN' && (
-          <NavLink
-            to="/users"
-            className={({ isActive }) =>
-              cn(
-                "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              )
-            }
-          >
-            <Users className="w-4 h-4" />
-            Users
-          </NavLink>
+          <div className="pt-4 mt-4 border-t space-y-1">
+            <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Administration
+            </div>
+            {adminNavItems.map((item) => (
+              <NavLink
+                key={item.href}
+                to={item.href}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                    isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  )
+                }
+              >
+                <item.icon className="w-4 h-4" />
+                {item.name}
+              </NavLink>
+            ))}
+          </div>
         )}
       </nav>
       <div className="p-4 border-t text-xs text-muted-foreground">
