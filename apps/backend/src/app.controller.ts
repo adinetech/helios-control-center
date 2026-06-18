@@ -1,12 +1,12 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Post, Inject } from '@nestjs/common';
 import { AppService } from './app.service';
-import { TelemetryCronService } from './telemetry/telemetry-cron.service';
+import type { TelemetryProvider } from './telemetry/telemetry.provider';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly telemetryCron: TelemetryCronService
+    @Inject('TELEMETRY_PROVIDER') private readonly telemetryProvider: TelemetryProvider
   ) {}
 
   @Get()
@@ -16,7 +16,11 @@ export class AppController {
 
   @Post('trigger')
   async triggerTelemetry() {
-    await this.telemetryCron.handleCron();
-    return { success: true };
+    try {
+      await this.telemetryProvider.processTelemetry();
+      return { success: true };
+    } catch (e) {
+      return { success: false, error: e.message, stack: e.stack };
+    }
   }
 }
