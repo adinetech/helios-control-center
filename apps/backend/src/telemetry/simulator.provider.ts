@@ -1,15 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
+import { TelemetryProvider } from './telemetry.provider';
 
 @Injectable()
-export class TelemetryGeneratorService {
-  private readonly logger = new Logger(TelemetryGeneratorService.name);
+export class SimulatorTelemetryProvider implements TelemetryProvider {
+  private readonly logger = new Logger(SimulatorTelemetryProvider.name);
 
   constructor(private readonly prisma: PrismaService) {}
 
-  @Cron('*/5 * * * * *') // Run every 5 seconds for faster testing/demo
-  async generateTelemetry() {
+  async processTelemetry(): Promise<void> {
     const farms = await this.prisma.farm.findMany({ where: { status: 'ONLINE' } });
     if (farms.length === 0) return;
 
@@ -39,14 +38,19 @@ export class TelemetryGeneratorService {
       const isWarning = Math.random() < 0.05; // 5% chance
       if (isWarning) {
         temperatureC += 10; // Overheating
-        this.logger.warn(`Farm ${farm.name} is experiencing anomalous conditions! Temp: ${temperatureC.toFixed(2)}C`);
-        // Maybe update farm status if we wanted to
       }
 
       // Power Output based on capacity and irradiance
-      // Efficiency decreases slightly as temperature rises above 25C
       const efficiencyLoss = Math.max(0, (temperatureC - 25) * 0.004);
       const powerOutputKw = (farm.capacityKw * (irradiance / 1000)) * (1 - efficiencyLoss);
+
+      // Simulate some realistic hybrid inverter metrics for the simulator mode too
+      // so the dashboard looks good even in simulator mode
+      const pv1PowerKw = powerOutputKw * 0.6;
+      const pv2PowerKw = powerOutputKw * 0.4;
+      const loadPowerKw = 0.5 + Math.random() * 0.5; // 500W to 1kW base load
+      const batterySoc = 50 + Math.sin(hour / 24 * Math.PI * 2) * 30; // Swings from 20 to 80
+      const gridPowerKw = powerOutputKw > loadPowerKw ? -(powerOutputKw - loadPowerKw) : (loadPowerKw - powerOutputKw);
 
       await this.prisma.telemetry.create({
         data: {
@@ -54,6 +58,14 @@ export class TelemetryGeneratorService {
           powerOutputKw: Math.max(0, powerOutputKw),
           temperatureC,
           irradiance,
+          pv1PowerKw,
+          pv2PowerKw,
+          totalPvPowerKw: powerOutputKw,
+          batterySoc: Math.max(0, Math.min(100, batterySoc)),
+          batteryVoltage: 24.5 + Math.random(),
+          batteryPowerKw: powerOutputKw > loadPowerKw ? powerOutputKw - loadPowerKw : loadPowerKw - powerOutputKw,
+          gridPowerKw,
+          loadPowerKw,
         },
       });
     }

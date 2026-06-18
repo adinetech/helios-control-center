@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Param, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
 import { FarmsService } from './farms.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -21,6 +21,17 @@ export class FarmsController {
   @Get(':id')
   findById(@Param('id') id: string) {
     return this.farmsService.findById(id);
+  }
+
+  @Delete(':id')
+  @Roles(Role.ADMIN)
+  async remove(@Param('id') id: string) {
+    return this.farmsService.remove(id);
+  }
+
+  @Get(':id/telemetry')
+  async getTelemetry(@Param('id') id: string) {
+    return this.farmsService.getTelemetry(id, 60);
   }
 
   @Roles(Role.ADMIN, Role.MANAGER)

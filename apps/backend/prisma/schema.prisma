@@ -51,4 +51,16 @@ model Telemetry {
   powerOutputKw Float
   temperatureC  Float
   irradiance    Float
+
+  // Extended Hybrid Inverter Metrics
+  pv1PowerKw         Float?
+  pv2PowerKw         Float?
+  totalPvPowerKw     Float?
+  batterySoc         Float?
+  batteryVoltage     Float?
+  batteryPowerKw     Float?
+  gridPowerKw        Float?
+  loadPowerKw        Float?
+  dailyProductionKwh Float?
+  totalProductionKwh Float?
 }

@@ -30,6 +30,21 @@ async function main() {
   } else {
     console.log(`Admin user ${adminEmail} already exists.`);
   }
+
+  // Seed default farms
+  const farmCount = await prisma.farm.count();
+  if (farmCount === 0) {
+    await prisma.farm.createMany({
+      data: [
+        { name: 'Nevada Solar One', location: 'Nevada, USA', capacityKw: 64000, status: 'ONLINE' },
+        { name: 'Kamuthi Solar Power Project', location: 'Tamil Nadu, India', capacityKw: 648000, status: 'ONLINE' },
+        { name: 'Ouarzazate Solar Power Station', location: 'Drâa-Tafilalet, Morocco', capacityKw: 510000, status: 'ONLINE' },
+      ],
+    });
+    console.log('Seeded default solar farms.');
+  } else {
+    console.log('Solar farms already exist. Skipping seed.');
+  }
 }
 
 main()

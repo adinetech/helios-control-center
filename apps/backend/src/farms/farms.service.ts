@@ -9,6 +9,18 @@ export class FarmsService {
     return this.prisma.farm.findMany();
   }
 
+  async remove(id: string) {
+    return this.prisma.farm.delete({ where: { id } });
+  }
+
+  async getTelemetry(farmId: string, minutes: number = 60) {
+    const since = new Date(Date.now() - minutes * 60000);
+    return this.prisma.telemetry.findMany({
+      where: { farmId, timestamp: { gte: since } },
+      orderBy: { timestamp: 'asc' },
+    });
+  }
+
   async findById(id: string) {
     return this.prisma.farm.findUnique({ where: { id } });
   }

@@ -14,4 +14,9 @@ export class DashboardController {
   async getSummary() {
     return this.dashboardService.getSummary();
   }
+
+  @Get('history')
+  async getHistory() {
+    return this.dashboardService.getHistory(60); // Default to last 60 mins
+  }
 }
