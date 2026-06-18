@@ -28,6 +28,7 @@ import { PrismaService } from '../prisma/prisma.service';
     },
     TelemetryCronService,
   ],
+  exports: [TelemetryCronService],
 })
 export class TelemetryModule {}
 
