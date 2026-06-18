@@ -2,8 +2,12 @@ import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { CheckCircle2, Clock, XCircle, AlertCircle, Plus, Activity, User, Factory } from 'lucide-react';
+import { CheckCircle2, Clock, XCircle, AlertCircle, Plus, Activity, User, Factory, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
+import { Input } from '../components/ui/input';
+import { Textarea } from '../components/ui/textarea';
+import { Label } from '../components/ui/label';
 
 interface Task {
   id: string;
@@ -35,6 +39,9 @@ const statusIcons = {
 export const WorkflowsPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [newTask, setNewTask] = useState({ title: '', description: '' });
 
   const fetchTasks = async () => {
     try {
@@ -61,6 +68,27 @@ export const WorkflowsPage = () => {
     }
   };
 
+  const handleCreateTask = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTask.title) {
+      toast.error('Title is required');
+      return;
+    }
+    
+    setIsCreating(true);
+    try {
+      await api.post('/api/tasks', { ...newTask, priority: 'MEDIUM' });
+      toast.success('Task created successfully');
+      setNewTask({ title: '', description: '' });
+      setIsDialogOpen(false);
+      fetchTasks();
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed to create task');
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   if (loading) {
     return <div className="p-8 flex items-center justify-center text-muted-foreground animate-pulse">Loading workflows...</div>;
   }
@@ -72,10 +100,57 @@ export const WorkflowsPage = () => {
           <h1 className="text-3xl font-bold tracking-tight">Workflow Management</h1>
           <p className="text-muted-foreground mt-1">Manage operational tasks, maintenance tickets, and approval chains</p>
         </div>
-        <Button className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white">
-          <Plus className="w-4 h-4" />
-          Create Task
-        </Button>
+        
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white">
+              <Plus className="w-4 h-4" />
+              Create Task
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <form onSubmit={handleCreateTask}>
+              <DialogHeader>
+                <DialogTitle>Create New Task</DialogTitle>
+                <DialogDescription>
+                  Create a new operational task or maintenance ticket.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="title">Title *</Label>
+                  <Input 
+                    id="title" 
+                    value={newTask.title}
+                    onChange={(e) => setNewTask({...newTask, title: e.target.value})}
+                    placeholder="e.g. Inspect Inverter #2"
+                    disabled={isCreating}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea 
+                    id="description" 
+                    value={newTask.description}
+                    onChange={(e) => setNewTask({...newTask, description: e.target.value})}
+                    placeholder="Details about the task..."
+                    disabled={isCreating}
+                    className="resize-none"
+                    rows={3}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isCreating}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isCreating}>
+                  {isCreating ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Create Task'}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
