@@ -1,11 +1,12 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Factory, AlertTriangle, Users, Activity, Sun, FileBarChart } from 'lucide-react';
+import { LayoutDashboard, Factory, AlertTriangle, Users, Activity, Sun, FileBarChart, CheckSquare } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useAuthStore } from '../../store/auth';
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Solar Farms', href: '/farms', icon: Factory },
+  { name: 'Workflows', href: '/workflows', icon: CheckSquare },
   { name: 'Alerts', href: '/alerts', icon: AlertTriangle },
   { name: 'System Status', href: '/status', icon: Activity },
 ];

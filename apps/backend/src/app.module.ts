@@ -10,8 +10,10 @@ import { UsersModule } from './users/users.module';
 import { FarmsModule } from './farms/farms.module';
 import { HealthModule } from './health/health.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { AlertsModule } from './alerts/alerts.module';
 import { TelemetryModule } from './telemetry/telemetry.module';
 import { ReportsModule } from './reports/reports.module';
+import { TasksModule } from './tasks/tasks.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HttpMetricsInterceptor } from './metrics/http-metrics.interceptor';
@@ -38,7 +40,9 @@ import { HttpMetricsInterceptor } from './metrics/http-metrics.interceptor';
     HealthModule,
     DashboardModule,
     TelemetryModule,
+    AlertsModule,
     ReportsModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [
