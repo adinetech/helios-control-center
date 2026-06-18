@@ -1,104 +1,88 @@
-# ☀️ Helios Control Center
+# ☀️ SolarOps Solar Farm Management Cloud
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=flat&logo=typescript&logoColor=white)
-![React](https://img.shields.io/badge/react-%2320232a.svg?style=flat&logo=react&logoColor=%2361DAFB)
-![NestJS](https://img.shields.io/badge/nestjs-%23E0234E.svg?style=flat&logo=nestjs&logoColor=white)
-![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=flat&logo=docker&logoColor=white)
+[![Deploy to EC2](https://github.com/adinetech/helios-control-center/actions/workflows/deploy.yml/badge.svg)](https://github.com/adinetech/helios-control-center/actions/workflows/deploy.yml)
 
-Helios Control Center is an enterprise-grade IoT fleet management platform designed to monitor, analyze, and manage simulated solar farm telemetry in real-time. Built as a comprehensive university project demonstrating modern SaaS architecture, it features a complete observability stack, Role-Based Access Control (RBAC), and a dynamic, dark-mode-first React frontend.
+**SolarOps** is an enterprise-grade solar farm operations platform designed to monitor, analyze, and manage real-time solar telemetry across multiple sites. Built as a comprehensive cloud platform demonstrating modern SaaS architecture — full observability stack, Role-Based Access Control (RBAC), and a dynamic SCADA-style React dashboard.
 
-## ✨ Features
+## 🏗️ Architecture
 
-- **Real-Time Telemetry Dashboard**: Live monitoring of active solar farms, tracking Battery SOC, Grid Import/Export, and PV Strings.
-- **Pluggable Telemetry Providers**: Switch between a deterministic Simulator engine (for demos) and a Live Deye Inverter provider via environment variables.
-- **Live "Digital Twin" Mode**: Securely pull real Prometheus telemetry from a physical Deye Hybrid Inverter over a private Tailscale network.
-- **Enterprise Observability**: Fully integrated Prometheus, Grafana, Promtail, and Loki stack for metrics collection and distributed log aggregation.
-- **Secure Authentication (RBAC)**: JWT-based authentication enforcing strict Admin-only access to user management and sensitive endpoints.
-- **Polished UI/UX**: Built with React 19, Tailwind CSS v4, and shadcn/ui, featuring interactive Recharts, loading skeletons, and a global Command Palette (⌘K).
+```
+[ React Frontend ] ←→ [ NestJS Backend ] ←→ [ PostgreSQL ]
+        ↓                       ↓
+  [ Tailscale VPN ]      [ Prometheus + Loki ]
+                               ↓
+                          [ Grafana ]
+```
 
-## 🏗️ Technology Stack
-
-- **Frontend**: React 19, Vite, TypeScript, Tailwind CSS v4, shadcn/ui, Zustand, TanStack Query, Recharts.
-- **Backend**: NestJS, TypeScript, Prisma ORM.
-- **Database**: PostgreSQL 15.
-- **Monitoring**: Prometheus (Metrics), Promtail & Loki (Logs), Grafana (Dashboards).
-- **Infrastructure**: Docker & Docker Compose.
-
-## 🚀 Quick Start
-
-The entire stack is containerized. To launch the platform:
+## 🚀 Quick Start (Local)
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/helios-control-center.git
+git clone https://github.com/adinetech/helios-control-center.git
 cd helios-control-center
-
-# Build and start all services
-make build
-
-# Wait a few seconds for databases to initialize, then run migrations and seed data
-make migrate
-make seed
+cp .env.example .env
+docker compose up -d
 ```
 
-### Accessing the Services
+Access the platform:
+- **Landing Page**: `http://localhost:5173`
+- **Dashboard**: `http://localhost:5173/dashboard` (Login: `admin@solarops.cloud` / `admin`)
+- **Grafana**: `http://localhost:3001` (admin / admin)
+- **API Docs**: `http://localhost:3000/api/docs`
+- **Prometheus**: `http://localhost:9090`
 
-- **Frontend Dashboard**: `http://localhost:5173` (Login: `admin@helios.local` / `admin`)
-- **Backend Swagger API**: `http://localhost:3000/api/docs`
-- **Grafana Dashboards**: `http://localhost:3001` (Login: `admin` / `admin`)
-- **Adminer (DB UI)**: `http://localhost:8080`
+## ☁️ Cloud Deployment (AWS EC2)
 
-## 🛠️ Docker & Makefile Commands
+Deployment is fully automated via GitHub Actions. Any push to `main` will:
+1. SSH into the EC2 instance
+2. Pull the latest code
+3. Rebuild and restart all Docker containers
 
-The project includes a `Makefile` to simplify common operations:
+Set these GitHub Repository Secrets:
+- `EC2_HOST` — Your Elastic IP
+- `EC2_USERNAME` — `ubuntu`
+- `EC2_SSH_KEY` — Contents of your `.pem` file
 
-- `make up`: Starts all containers in the background.
-- `make down`: Stops and removes all containers.
-- `make build`: Rebuilds the frontend and backend Docker images.
-- `make logs`: Tails logs for all containers.
-- `make migrate`: Deploys Prisma database migrations.
-- `make seed`: Seeds the database with the default Admin user and sample Solar Farms.
-- `make reset`: Completely wipes volumes, rebuilds, migrates, and reseeds the environment.
-- `make clean`: Removes containers, volumes, and orphaned images.
-- `make status`: Shows the running status of the Docker Compose stack.
+## 📁 Project Structure
 
-## 📂 Project Structure
-
-```text
+```
 helios-control-center/
 ├── apps/
-│   ├── backend/          # NestJS Application, Prisma Schema, API
-│   └── frontend/         # React SPA, Vite, Tailwind v4
-├── docs/                 # Architectural documentation and guides
-├── infra/                # Observability configs (Prometheus, Grafana, Loki)
-├── docker-compose.yml    # Root Docker stack configuration
-├── Makefile              # Helper scripts
-└── README.md
+│   ├── backend/          # NestJS API (TypeScript)
+│   │   ├── prisma/       # DB schema, migrations, seed
+│   │   └── src/          # Controllers, services, modules
+│   └── frontend/         # React + Vite dashboard
+│       └── src/
+│           ├── pages/    # Dashboard, Farms, Alerts, Status, Landing
+│           └── components/
+├── infra/
+│   ├── grafana/          # Dashboard provisioning
+│   ├── prometheus/       # Metrics scrape config
+│   ├── loki/             # Log aggregation
+│   └── promtail/         # Log shipper
+├── .github/workflows/    # CI/CD pipeline
+└── docker-compose.yml    # Full stack orchestration
 ```
 
-## 📊 Monitoring Stack
+## 🛠️ Tech Stack
 
-The platform implements a production-style observability pipeline:
-1. **Prometheus**: Scrapes `/api/metrics` (NestJS) and `node-exporter` (Host metrics).
-2. **Loki + Promtail**: Aggregates Docker container logs into a centralized TSDB stream.
-3. **Grafana**: Automatically provisions Prometheus and Loki datasources on startup, serving pre-configured dashboards for rapid incident response.
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, Vite, Recharts, shadcn/ui |
+| Backend | NestJS, Prisma ORM, JWT Auth |
+| Database | PostgreSQL 15 |
+| Monitoring | Prometheus, Grafana, Loki, Promtail |
+| Telemetry | Deye Inverter Exporter (real) / Simulator |
+| Infrastructure | AWS EC2, Docker Compose, Tailscale VPN |
+| CI/CD | GitHub Actions |
 
-## 🗺️ Documentation
+## 📊 Features
 
-Please refer to the `docs/` folder for detailed guides:
-- [System Architecture](docs/ARCHITECTURE.md)
-- [API Reference](docs/API.md)
-- [AWS Deployment Guide](docs/AWS_DEPLOYMENT.md)
-- [Presentation & Viva Guide](docs/PRESENTATION.md)
+- **SCADA-style Dashboard** — Real-time energy flow animation, KPI cards, 8+ analytics charts
+- **Multi-site Solar Farm Management** — CRUD operations for farm installations
+- **Live Telemetry** — Battery SOC, PV power, grid import/export, inverter temperature
+- **Role-Based Access Control** — Admin and Operator roles with JWT authentication
+- **Full Observability** — Node.js metrics, HTTP latency, event loop lag, application logs
+- **Automated Deployment** — Push to main → live in 60 seconds
 
-## 🔮 Future Improvements
-
-- **WebSockets / SSE**: Replace HTTP polling with Server-Sent Events or WebSockets for instant telemetry updates.
-- **Microservices Split**: Decouple the `TelemetryGeneratorService` into a standalone worker node or serverless function.
-- **Geospatial Queries**: Implement PostGIS to plot solar farms on a live, interactive map.
-- **CI/CD Pipeline**: Integrate GitHub Actions for automated linting, testing, and Docker image pushing.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+---
+*B.Tech CSE 2024-2028 | Amazon Web Services Case Study | Problem Statement #42*

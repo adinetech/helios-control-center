@@ -19,7 +19,7 @@ export const useAuthStore = create<AuthState>()(
       logout: () => set({ token: null, role: null, email: null }),
     }),
     {
-      name: 'helios-auth',
+      name: 'solarops-auth',
     }
   )
 );

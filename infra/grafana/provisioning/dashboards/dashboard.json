@@ -1,5 +1,5 @@
 {
-  "title": "Helios Observability",
+  "title": "SolarOps Observability",
   "panels": [
     {
       "type": "timeseries",

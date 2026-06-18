@@ -1,6 +1,6 @@
 # API Documentation
 
-The Helios Control Center backend exposes a RESTful JSON API. All endpoints (except login) require a valid JWT Bearer token.
+The SolarOps Solar Farm Management Cloud backend exposes a RESTful JSON API. All endpoints (except login) require a valid JWT Bearer token.
 
 **Base URL**: `http://localhost:3000`  
 **Swagger UI**: `http://localhost:3000/api/docs`
@@ -17,7 +17,7 @@ Authenticates a user and returns a JWT token.
 **Request Body**
 ```json
 {
-  "email": "admin@helios.local",
+  "email": "admin@solarops.cloud",
   "password": "admin"
 }
 ```

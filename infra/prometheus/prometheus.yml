@@ -2,12 +2,12 @@ global:
   scrape_interval: 5s
 
 scrape_configs:
-  - job_name: 'helios-backend'
+  - job_name: 'solarops-backend'
     metrics_path: '/api/metrics'
     static_configs:
       - targets: ['backend:3000']
         labels:
-          application: 'helios-backend'
+          application: 'solarops-backend'
 
   - job_name: 'node-exporter'
     static_configs:

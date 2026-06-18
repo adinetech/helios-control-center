@@ -13,8 +13,8 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   const config = new DocumentBuilder()
-    .setTitle('Helios Control Center API')
-    .setDescription('API documentation for Helios Control Center')
+    .setTitle('SolarOps API')
+    .setDescription('API documentation for SolarOps Solar Farm Management Cloud')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

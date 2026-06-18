@@ -1,6 +1,6 @@
 # System Architecture
 
-Helios Control Center is built using a modern, decoupled microservices-oriented architecture orchestrated by Docker Compose. This document details the structural components and the architectural decisions driving the project.
+SolarOps Solar Farm Management Cloud is built using a modern, decoupled microservices-oriented architecture orchestrated by Docker Compose. This document details the structural components and the architectural decisions driving the project.
 
 ## 1. Overall System Architecture
 

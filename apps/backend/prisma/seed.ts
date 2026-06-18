@@ -8,9 +8,9 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@helios.local';
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@solarops.cloud';
   const adminPassword = process.env.ADMIN_PASSWORD || 'admin';
-  const adminName = process.env.ADMIN_NAME || 'Helios Admin';
+  const adminName = process.env.ADMIN_NAME || 'SolarOps Admin';
 
   const existingAdmin = await prisma.user.findUnique({
     where: { email: adminEmail },

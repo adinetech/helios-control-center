@@ -1,6 +1,6 @@
 # AWS Deployment Guide
 
-This guide outlines the recommended strategy for deploying the Helios Control Center to a production AWS environment. Based on the project's Docker Compose architecture, an **EC2 + Docker Compose** deployment represents the most efficient path to production without introducing the heavy complexity of ECS or EKS.
+This guide outlines the recommended strategy for deploying the SolarOps Solar Farm Management Cloud to a production AWS environment. Based on the project's Docker Compose architecture, an **EC2 + Docker Compose** deployment represents the most efficient path to production without introducing the heavy complexity of ECS or EKS.
 
 ## 1. AWS Infrastructure Setup
 
