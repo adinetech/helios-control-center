@@ -18,11 +18,39 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd helios-control-center
-            git pull origin main
+            # 1. Install Docker and Docker Compose if they aren't installed yet
+            if ! command -v docker &> /dev/null; then
+              echo "Docker not found. Installing Docker..."
+              curl -fsSL https://get.docker.com -o get-docker.sh
+              sudo sh get-docker.sh
+              sudo usermod -aG docker $USER
+              
+              # Restart the SSH session so the user group change takes effect
+              # However, for this script execution, we will just use 'sudo' for docker commands
+              # if the group hasn't applied to this active session yet.
+            fi
+
+            # 2. Clone or Pull the repository
+            if [ ! -d "helios-control-center" ]; then
+              echo "Repository not found. Cloning..."
+              git clone https://github.com/adinetech/helios-control-center.git
+              cd helios-control-center
+            else
+              echo "Repository exists. Pulling latest changes..."
+              cd helios-control-center
+              git pull origin main
+            fi
+
+            # 3. Create a placeholder .env file if it doesn't exist 
+            # (You will still need to manually edit this file ONE time on the server to add your Tailscale key)
+            if [ ! -f ".env" ]; then
+              echo "Copying .env.example to .env..."
+              cp .env.example .env
+            fi
             
-            # Rebuild and restart the containers
-            docker compose up -d --build
+            # 4. Rebuild and restart the containers
+            # Using sudo just in case the docker group hasn't applied to the current SSH session yet
+            sudo docker compose up -d --build
             
-            # Prune old images to save disk space
-            docker image prune -f
+            # 5. Prune old images to save disk space
+            sudo docker image prune -f
