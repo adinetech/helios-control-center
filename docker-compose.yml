@@ -40,8 +40,8 @@ services:
       - "3000:3000"
     environment:
       DATABASE_URL: postgresql://admin:password@database:5432/helios?schema=public
-      TELEMETRY_PROVIDER: ${TELEMETRY_PROVIDER:-simulator}
-      DEYE_EXPORTER_URL: ${DEYE_EXPORTER_URL:-http://localhost:9105/metrics}
+      TELEMETRY_PROVIDER: deye
+      DEYE_EXPORTER_URL: ${DEYE_EXPORTER_URL:-http://192.168.0.8:9105/metrics}
     networks:
       - helios-net
     depends_on:
