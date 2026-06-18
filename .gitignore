@@ -38,3 +38,10 @@ presentation/
 *.sln
 *.sw?
 .DS_Store
+*.md
+!README.md
+!apps/frontend/README.md
+!apps/backend/README.md
+!docs/ARCHITECTURE.md
+!docs/API.md
+!docs/AWS_DEPLOYMENT.md
