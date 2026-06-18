@@ -12,36 +12,31 @@ async function main() {
   const adminPassword = process.env.ADMIN_PASSWORD || 'admin';
   const adminName = process.env.ADMIN_NAME || 'SolarOps Admin';
 
-  const existingAdmin = await prisma.user.findUnique({
-    where: { email: adminEmail },
-  });
-
+  const existingAdmin = await prisma.user.findUnique({ where: { email: adminEmail } });
   if (!existingAdmin) {
     const hashedPassword = await bcrypt.hash(adminPassword, 10);
     const admin = await prisma.user.create({
-      data: {
-        email: adminEmail,
-        password: hashedPassword,
-        name: adminName,
-        role: Role.ADMIN,
-      },
+      data: { email: adminEmail, password: hashedPassword, name: adminName, role: Role.ADMIN },
     });
     console.log(`Created default admin user: ${admin.email}`);
   } else {
     console.log(`Admin user ${adminEmail} already exists.`);
   }
 
-  // Seed default farms
+  // Seed home solar installation
   const farmCount = await prisma.farm.count();
   if (farmCount === 0) {
     await prisma.farm.createMany({
       data: [
-        { name: 'Nevada Solar One', location: 'Nevada, USA', capacityKw: 64000, status: 'ONLINE' },
-        { name: 'Kamuthi Solar Power Project', location: 'Tamil Nadu, India', capacityKw: 648000, status: 'ONLINE' },
-        { name: 'Ouarzazate Solar Power Station', location: 'Drâa-Tafilalet, Morocco', capacityKw: 510000, status: 'ONLINE' },
+        {
+          name: "Adine's Home Solar",
+          location: 'Pune, Maharashtra, India',
+          capacityKw: 3.5,
+          status: 'ONLINE',
+        },
       ],
     });
-    console.log('Seeded default solar farms.');
+    console.log('Seeded home solar installation.');
   } else {
     console.log('Solar farms already exist. Skipping seed.');
   }

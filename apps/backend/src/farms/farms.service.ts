@@ -10,6 +10,8 @@ export class FarmsService {
   }
 
   async remove(id: string) {
+    // Delete linked telemetry first to avoid FK constraint violation
+    await this.prisma.telemetry.deleteMany({ where: { farmId: id } });
     return this.prisma.farm.delete({ where: { id } });
   }
 

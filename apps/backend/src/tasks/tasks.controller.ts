@@ -9,7 +9,7 @@ import { TaskStatus, TaskPriority } from '@prisma/client';
 @ApiTags('Tasks / Workflows')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('api/tasks')
+@Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
