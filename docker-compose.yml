@@ -147,6 +147,7 @@ services:
       - "3001:3000"
     volumes:
       - ./infra/grafana/provisioning:/etc/grafana/provisioning
+      - grafana-data:/var/lib/grafana
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_AUTH_ANONYMOUS_ENABLED=true
@@ -165,6 +166,7 @@ services:
 volumes:
   postgres-data:
   tailscale-data:
+  grafana-data:
 
 networks:
   helios-net:
