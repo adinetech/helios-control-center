@@ -1,0 +1,54 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  OPERATOR
+}
+
+enum FarmStatus {
+  ONLINE
+  OFFLINE
+  MAINTENANCE
+  WARNING
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(OPERATOR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  farms     Farm[]   @relation("UserFarms")
+}
+
+model Farm {
+  id          String   @id @default(uuid())
+  name        String
+  location    String
+  capacityKw  Float
+  status      FarmStatus @default(OFFLINE)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  users       User[]   @relation("UserFarms")
+  telemetry   Telemetry[]
+}
+
+model Telemetry {
+  id            String   @id @default(uuid())
+  farmId        String
+  farm          Farm     @relation(fields: [farmId], references: [id])
+  timestamp     DateTime @default(now())
+  powerOutputKw Float
+  temperatureC  Float
+  irradiance    Float
+}
