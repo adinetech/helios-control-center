@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useAuthStore } from './store/auth';
 import { AppLayout } from './components/layout/AppLayout';
 import { LoginPage } from './pages/Login';
+import { LandingPage } from './pages/Landing';
 import { DashboardPage } from './pages/Dashboard';
 import { FarmsPage } from './pages/Farms';
 import { FarmDetailsPage } from './pages/FarmDetails';
@@ -13,7 +14,7 @@ const ProtectedRoute = ({ children, requireAdmin }: { children: React.ReactNode,
   const { token, role } = useAuthStore();
   
   if (!token) return <Navigate to="/login" replace />;
-  if (requireAdmin && role !== 'ADMIN') return <Navigate to="/" replace />;
+  if (requireAdmin && role !== 'ADMIN') return <Navigate to="/dashboard" replace />;
   
   return <>{children}</>;
 };
@@ -22,10 +23,13 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         
+        {/* Protected app routes */}
         <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-          <Route path="/" element={<DashboardPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/farms" element={<FarmsPage />} />
           <Route path="/farms/:id" element={<FarmDetailsPage />} />
           <Route path="/alerts" element={<AlertsPage />} />
@@ -37,6 +41,9 @@ function App() {
             </ProtectedRoute>
           } />
         </Route>
+
+        {/* Catch-all */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
