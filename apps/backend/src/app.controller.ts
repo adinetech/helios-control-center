@@ -18,7 +18,19 @@ export class AppController {
   async triggerTelemetry() {
     try {
       await this.telemetryProvider.processTelemetry();
-      return { success: true };
+      
+      // Try fetching right after insert to verify
+      const prisma = (this.telemetryProvider as any).prisma;
+      const count = await prisma.telemetry.count();
+      const records = await prisma.telemetry.findMany({ take: 2 });
+      const farms = await prisma.farm.findMany({ where: { status: 'ONLINE' } });
+
+      return { 
+        success: true, 
+        countAfterInsert: count,
+        farmsFound: farms.length,
+        records: records 
+      };
     } catch (e) {
       return { success: false, error: e.message, stack: e.stack };
     }
